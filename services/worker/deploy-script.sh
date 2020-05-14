@@ -1,5 +1,10 @@
 #!/bin/bash
 
+gen_env_file() {
+  echo "CONF_FILE=/go/src/github.com/ufcg-lsd/arrebol-pb-worker/worker/worker-conf.json" > "./.env"
+  echo "KEYS_PATH=go/src/github.com/ufcg-lsd/arrebol-pb-worker/worker/keys" >> "./.env"
+}
+
 check_docker_installation() {
   sudo docker --version
   if [[ "$?" != 0 ]]; then
@@ -12,10 +17,6 @@ check_docker_installation() {
 check_docker_installation
 
 CONF_FILE_PATH="./worker-conf.json"
-REPO_URL="https://github.com/ufcg-lsd/arrebol-pb-worker.git"
-
-git clone $REPO_URL
-
 TAG=${1-latest}
 IMAGE=ufcg-lsd/arrebol-worker:$TAG
 ID=worker_id=`jq .Id $CONF_FILE_PATH`
@@ -26,6 +27,10 @@ sudo docker stop $CONTAINER_NAME
 sudo docker rm $CONTAINER_NAME
 sudo docker run --name $CONTAINER_NAME -tdi $IMAGE
 
-sudo docker cp $CONF_FILE_PATH  $CONTAINER_NAME:/go/src/github.com/ufcg-lsd/arrebol-pb-worker/worker
-sudo docker exec $CONTAINER_NAME /bin/bash -c "/go/src/github.com/ufcg-lsd/arrebol-pb-worker/main"
+PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
+
+sudo docker cp $CONF_FILE_PATH $CONTAINER_NAME:$PROJECT_PATH/worker
+gen_env_file
+sudo docker cp "./.env" $CONTAINER_NAME:$PROJECT_PATH
+sudo docker exec $CONTAINER_NAME /bin/bash -c "$PROJECT_PATH/main"
 

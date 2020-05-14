@@ -2,7 +2,6 @@
   "ServerEndPoint": "http://localhost:8000/v1",
   "Vcpu": "1",
   "Ram": "3",
-  "Address": "10.11.19.9",
   "Id": "1023",
   "QueueId": "OPTIONAL"
 }
