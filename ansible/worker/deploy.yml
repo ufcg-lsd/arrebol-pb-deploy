@@ -14,6 +14,7 @@
         dest: "{{ remote_project_path }}"
       with_items:
         - "{{ services_conf_files_path }}/worker-conf.json"
+        - - "{{ services_conf_files_path }}/.env"
         - "{{ worker_service_path }}/deploy-script.sh"
 
     - name: Run

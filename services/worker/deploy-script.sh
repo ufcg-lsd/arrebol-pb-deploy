@@ -1,10 +1,5 @@
 #!/bin/bash
 
-gen_env_file() {
-  echo "CONF_FILE=/go/src/github.com/ufcg-lsd/arrebol-pb-worker/worker/worker-conf.json" > "./.env"
-  echo "KEYS_PATH=go/src/github.com/ufcg-lsd/arrebol-pb-worker/worker/keys" >> "./.env"
-}
-
 check_docker_installation() {
   sudo docker --version
   if [[ "$?" != 0 ]]; then
@@ -30,7 +25,6 @@ sudo docker run --name $CONTAINER_NAME -tdi $IMAGE
 PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
 
 sudo docker cp $CONF_FILE_PATH $CONTAINER_NAME:$PROJECT_PATH/worker
-gen_env_file
 sudo docker cp "./.env" $CONTAINER_NAME:$PROJECT_PATH
 sudo docker exec $CONTAINER_NAME /bin/bash -c "$PROJECT_PATH/main"
 
