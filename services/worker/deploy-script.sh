@@ -2,7 +2,8 @@
 
 check_docker_installation() {
   sudo docker --version
-  if [[ "$?" != 0 ]]; then
+  EXIT_CODE=`$?`
+  if [[ $EXIT_CODE -ne 0 ]]; then
     sudo apt-get install docker.io
     sudo systemctl start docker
     sudo systemctl enable docker
@@ -13,18 +14,30 @@ check_docker_installation
 
 CONF_FILE_PATH="./worker-conf.json"
 TAG=${1-latest}
-IMAGE=ufcg-lsd/arrebol-worker:$TAG
-ID=worker_id=`jq .Id $CONF_FILE_PATH`
+IMAGE=raonismaneoto/arrebol-worker:$TAG
+ID=`jq .Id $CONF_FILE_PATH`
+ID=${ID%\"}
+ID=${ID#\"}
+
 CONTAINER_NAME=arrebol-worker-$ID
 
 sudo docker pull $IMAGE
 sudo docker stop $CONTAINER_NAME
 sudo docker rm $CONTAINER_NAME
-sudo docker run --name $CONTAINER_NAME -tdi $IMAGE
+sudo docker run --name $CONTAINER_NAME -tdi $IMAGE \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -v /usr/bin/docker:/usr/bin/docker
+
 
 PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
+KEYS_DIR=$(grep ^KEYS_PATH ./.env | awk -F "=" '{print $2}')
+
+SERVER_ENDPOINT=$(grep ^SERVER_ENDPOINT ./.env | awk -F "=" '{print $2}')
+curl $SERVER_ENDPOINT/publickey > ./server.pub
 
 sudo docker cp $CONF_FILE_PATH $CONTAINER_NAME:$PROJECT_PATH/worker
 sudo docker cp "./.env" $CONTAINER_NAME:$PROJECT_PATH
-sudo docker exec $CONTAINER_NAME /bin/bash -c "$PROJECT_PATH/main"
+sudo docker exec $CONTAINER_NAME /bin/bash -c "mkdir -p $KEYS_DIR"
+sudo docker cp "./server.pub" $CONTAINER_NAME:$KEYS_DIR
+sudo docker exec $CONTAINER_NAME /bin/bash -c "$PROJECT_PATH/main" &
 
