@@ -39,6 +39,10 @@
         - "{{ services_conf_files_path }}/.env"
         - "{{ worker_service_path }}/deploy-script.sh"
 
+    - name: Install dependencies
+      become: yes
+      shell: "{{ sudo apt-get install jq }}"
+
     - name: Run
       shell: "{{ run }}"
       become: yes

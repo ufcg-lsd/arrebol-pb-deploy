@@ -2,7 +2,7 @@
 
 check_docker_installation() {
   sudo docker --version
-  EXIT_CODE=`$?`
+  EXIT_CODE=$?
   if [[ $EXIT_CODE -ne 0 ]]; then
     sudo apt-get install docker.io
     sudo systemctl start docker
@@ -24,16 +24,17 @@ CONTAINER_NAME=arrebol-worker-$ID
 sudo docker pull $IMAGE
 sudo docker stop $CONTAINER_NAME
 sudo docker rm $CONTAINER_NAME
-sudo docker run --name $CONTAINER_NAME -tdi $IMAGE \
+sudo docker run --name $CONTAINER_NAME -tdi \
         -v /var/run/docker.sock:/var/run/docker.sock \
-        -v /usr/bin/docker:/usr/bin/docker
-
+        -v /usr/bin/docker:/usr/bin/docker \
+        $IMAGE
 
 PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
 KEYS_DIR=$(grep ^KEYS_PATH ./.env | awk -F "=" '{print $2}')
 
 SERVER_ENDPOINT=$(grep ^SERVER_ENDPOINT ./.env | awk -F "=" '{print $2}')
 curl $SERVER_ENDPOINT/publickey > ./server.pub
+sudo chmod 600 ./server.pub
 
 sudo docker cp $CONF_FILE_PATH $CONTAINER_NAME:$PROJECT_PATH/worker
 sudo docker cp "./.env" $CONTAINER_NAME:$PROJECT_PATH
