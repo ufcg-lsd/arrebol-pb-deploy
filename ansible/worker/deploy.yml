@@ -41,7 +41,7 @@
 
     - name: Install dependencies
       become: yes
-      shell: "{{ sudo apt-get install jq }}"
+      shell: "{{ 'sudo apt-get install -y jq' }}"
 
     - name: Run
       shell: "{{ run }}"
