@@ -32,9 +32,9 @@ sudo docker run --name $CONTAINER_NAME -tdi \
 PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
 KEYS_DIR=$(grep ^KEYS_PATH ./.env | awk -F "=" '{print $2}')
 
-SERVER_ENDPOINT=$(grep ^SERVER_ENDPOINT ./.env | awk -F "=" '{print $2}')
+SERVER_ENDPOINT=$(grep ^SERVER_USER_API_ENDPOINT ./.env | awk -F "=" '{print $2}')
 curl $SERVER_ENDPOINT/publickey > ./server.pub
-sudo chmod 600 ./server.pub
+sudo chmod 644 ./server.pub
 
 sudo docker cp $CONF_FILE_PATH $CONTAINER_NAME:$PROJECT_PATH/worker
 sudo docker cp "./.env" $CONTAINER_NAME:$PROJECT_PATH
