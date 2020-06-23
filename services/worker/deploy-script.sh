@@ -30,7 +30,7 @@ sudo docker run --name $CONTAINER_NAME -tdi \
         -v /usr/bin/docker:/usr/bin/docker \
         $IMAGE:$TAG
 
-PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
+readonly PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
 KEYS_DIR=$(grep ^KEYS_PATH ./.env | awk -F "=" '{print $2}')
 
 SERVER_ENDPOINT=$(grep ^SERVER_USER_API_ENDPOINT ./.env | awk -F "=" '{print $2}')
