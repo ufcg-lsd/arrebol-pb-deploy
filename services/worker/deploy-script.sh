@@ -12,10 +12,11 @@ check_docker_installation() {
 
 check_docker_installation
 
-CONF_FILE_PATH="./worker-conf.json"
+readonly CONF_FILE_PATH="./worker-conf.json"
 TAG=${1-latest}
-IMAGE=raonismaneoto/arrebol-worker:$TAG
+readonly IMAGE=raonismaneoto/arrebol-worker
 ID=`jq .Id $CONF_FILE_PATH`
+#Remove quotations marks from ID
 ID=${ID%\"}
 ID=${ID#\"}
 
@@ -27,7 +28,7 @@ sudo docker rm $CONTAINER_NAME
 sudo docker run --name $CONTAINER_NAME -tdi \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /usr/bin/docker:/usr/bin/docker \
-        $IMAGE
+        $IMAGE:$TAG
 
 PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
 KEYS_DIR=$(grep ^KEYS_PATH ./.env | awk -F "=" '{print $2}')
