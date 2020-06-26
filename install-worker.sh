@@ -32,4 +32,4 @@ REMOTE_USER=$(grep ^remote_host_user $HOSTS_CONF_FILE | awk -F "=" '{print $2}')
 PATTERN_HELPER="remote_user"
 sed -i "s#.*$PATTERN_HELPER = .*#$PATTERN_HELPER = $REMOTE_USER#g" $ANSIBLE_CFG_FILE
 
-#cd ansible/worker && ansible-playbook -vvv deploy.yml
+cd ansible/worker && ansible-playbook -vvv deploy.yml
