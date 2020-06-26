@@ -1,0 +1,1 @@
+bash install-server.sh && install-worker.sh

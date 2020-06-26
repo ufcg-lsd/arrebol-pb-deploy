@@ -1,0 +1,50 @@
+---
+- hosts: worker-node-machine
+  vars:
+    run: bash -x setup-script.sh
+    remote_project_path: "/home/{{ lookup('config', 'DEFAULT_REMOTE_USER')}}/arrebol/"
+    services_path: "../../services"
+    services_conf_files_path: "{{ services_path }}/conf-files"
+    worker_service_path: "{{ services_path }}/worker"
+  tasks:
+    - name: Copy files
+      become: yes
+      copy:
+        src: "{{ item }}"
+        dest: "{{ remote_project_path }}"
+      with_items:
+        - "{{ worker_service_path }}/setup-script.sh"
+
+    - name: Setup worker node
+      shell: "{{ run }}"
+      become: yes
+      args:
+        chdir: "{{ remote_project_path }}"
+
+- hosts: worker-machine
+  vars:
+    run: bash -x deploy-script.sh
+    remote_project_path: "/home/{{ lookup('config', 'DEFAULT_REMOTE_USER')}}/arrebol/"
+    services_path: "../../services"
+    services_conf_files_path: "{{ services_path }}/conf-files"
+    worker_service_path: "{{ services_path }}/worker"
+  tasks:
+    - name: Copy files
+      become: yes
+      copy:
+        src: "{{ item }}"
+        dest: "{{ remote_project_path }}"
+      with_items:
+        - "{{ services_conf_files_path }}/worker-conf.json"
+        - "{{ services_conf_files_path }}/.env"
+        - "{{ worker_service_path }}/deploy-script.sh"
+
+    - name: Install dependencies
+      become: yes
+      shell: "{{ 'sudo apt-get install -y jq' }}"
+
+    - name: Run
+      shell: "{{ run }}"
+      become: yes
+      args:
+        chdir: "{{ remote_project_path }}"
