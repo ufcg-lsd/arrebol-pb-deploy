@@ -28,6 +28,7 @@ sudo docker rm $CONTAINER_NAME
 sudo docker run --name $CONTAINER_NAME -tdi \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -v /usr/bin/docker:/usr/bin/docker \
+        --env-file ./.env \
         $IMAGE:$TAG
 
 readonly PROJECT_PATH="/go/src/github.com/ufcg-lsd/arrebol-pb-worker"
