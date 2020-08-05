@@ -15,7 +15,6 @@ ANSIBLE_CFG_FILE="$(pwd)/ansible/worker/ansible.cfg"
 
 # setup hosts
 WORKER_HOST_IP=$(grep ^worker_host $HOSTS_CONF_FILE | awk -F "=" '{print $2}')
-echo $WORKER_HOST_IP_PATTERN
 sed -i '/\[worker-machine\]/,/\[worker-machine:vars\]/{//!d}' ${ANSIBLE_HOSTS_FILE}
 sed -i "/\[worker-machine:vars\]/i ${WORKER_HOST_IP}" ${ANSIBLE_HOSTS_FILE}
 
