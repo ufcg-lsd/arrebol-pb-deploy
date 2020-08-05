@@ -31,4 +31,4 @@ mkdir -p $(pwd)/services/conf-files/server/keys
 ./scripts/gen-key-pair.sh $(pwd)/services/conf-files/server/keys
 ./services/server/secrets-composer.sh
 
-#cd ansible/server && ansible-playbook -vvv deploy.yml
+cd ansible/server && ansible-playbook -vvv deploy.yml
